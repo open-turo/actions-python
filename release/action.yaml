@@ -1,0 +1,60 @@
+name: Python Release & Publish
+description: Python that publishes a new release.
+inputs:
+  checkout-repo:
+    required: false
+    description: Perform checkout as first step of action
+    default: "true"
+  github-token:
+    required: true
+    description: GitHub token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.GITHUB_TOKEN'
+    default: ${{ github.token }}
+  pypi-token:
+    required: false
+    description: PyPI token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.PYPI_TOKEN'
+  dry-run:
+    required: false
+    description: Whether to run semantic release in `dry-run` mode. It will override the `dryRun` attribute in your configuration file
+    default: "false"
+  extra-plugins:
+    required: false
+    description: Extra plugins for pre-install. You can also specify specifying version range for the extra plugins if you prefer.
+outputs:
+  new-release-published:
+    description: Whether a new release was published
+    value: ${{ steps.release.outputs.new_release_published }}
+  new-release-version:
+    description: Version of the new release
+    value: ${{ steps.release.outputs.new_release_version }}
+  new-release-major-version:
+    description: Major version of the new release
+    value: ${{ steps.release.outputs.new_release_major_version }}
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      if: inputs.checkout-repo
+      with:
+        fetch-depth: 0
+    - name: Set node.js version
+      if: hashFiles('.node-version') == ''
+      shell: bash
+      run: echo '16.14.2' > .node-version
+    - name: Setup tools
+      uses: open-turo/action-setup-tools@v1
+    # - name: Install dependencies
+    #   shell: bash
+    #   run: pip install -e .
+    - name: Install setuptools
+      shell: bash
+      run: python -m pip install --upgrade setuptools wheel twine
+    - name: Release
+      id: release
+      uses: cycjimmy/semantic-release-action@v2
+      with:
+        dry_run: ${{ inputs.dry-run }}
+        extra_plugins: ${{ inputs.extra-plugins }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        PYPI_TOKEN: ${{ inputs.pypi-token }}

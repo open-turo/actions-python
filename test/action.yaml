@@ -1,0 +1,35 @@
+name: Python Test
+description: GitHub Action that tests a python based repository
+inputs:
+  checkout-repo:
+    required: false
+    description: Perform checkout as first step of action
+    default: "true"
+  github-token:
+    required: true
+    description: GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'
+    default: ${{ github.token }}
+  pypi-token:
+    required: false
+    description: PyPI token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.PYPI_TOKEN'
+  test-flags:
+    required: false
+    description: Flags and args for test command
+    default: ""
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      if: inputs.checkout-repo == 'true'
+    - name: Setup tools
+      uses: open-turo/action-setup-tools@v1
+    - name: Install dependencies
+      shell: bash
+      run: |
+        pip install -e .
+        pip install -e .[dev] || true
+        pip install -e .[test] || true
+    - name: Run tests
+      shell: bash
+      run: pytest ${{ inputs.test-flags }}
