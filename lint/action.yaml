@@ -1,0 +1,29 @@
+name: Python Lint
+description: GitHub Action that lints a Python based repository
+inputs:
+  checkout-repo:
+    required: false
+    description: Perform checkout as first step of action
+    default: "true"
+  pypi-token:
+    required: false
+    description: PyPI token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.PYPI_TOKEN'
+  github-token:
+    required: true
+    description: GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'
+    default: ${{ github.token }}
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      if: inputs.checkout-repo == 'true'
+      with:
+        fetch-depth: 0
+    - name: Setup tools
+      uses: open-turo/action-setup-tools@v1
+    - name: Install dependencies
+      shell: bash
+      run: pip install -e .
+    - name: Pre-commit
+      uses: open-turo/action-pre-commit@v1
