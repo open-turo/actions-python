@@ -28,8 +28,8 @@ runs:
       shell: bash
       run: |
         pip install -e .
-        pip install -e .[dev] || true
-        pip install -e .[test] || true
+        pip install -e ".[dev]" || true
+        pip install -e ".[test]" || true
     - name: Run tests
       shell: bash
       run: pytest ${{ inputs.test-flags }}
