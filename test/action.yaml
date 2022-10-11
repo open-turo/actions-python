@@ -24,12 +24,32 @@ runs:
       if: inputs.checkout-repo == 'true'
     - name: Setup tools
       uses: open-turo/action-setup-tools@v1
-    - name: Install dependencies
+    # First we attempt to run a pip-based workflow if there is no poetry.lock
+    - name: Install pip dependencies
+      if: hashFiles('poetry.lock') == ''
       shell: bash
       run: |
+        # Install the current package as editable
         pip install -e .
+        # Install the extras="dev" setup.py dependencies
         pip install -e ".[dev]" || true
+        # Install the extras="test" setup.py dependencies
         pip install -e ".[test]" || true
-    - name: Run tests
+    - name: Run pip tests
+      if: hashFiles('poetry.lock') == ''
       shell: bash
       run: pytest ${{ inputs.test-flags }}
+    # If we do have a poetry.lock, we use a poetry based workflow
+    - name: Install poetry dependencies
+      if: hashFiles('poetry.lock') != ''
+      shell: bash
+      run: |
+        ${GITHUB_ACTION_PATH}/lib/poetry-install.sh
+        poetry install --extras dev || echo "No dev extras"
+        poetry install --with dev || echo "No dev dependency group"
+        poetry install --extras test || echo "No test extras"
+        poetry install --with test || echo "No test dependency group"
+    - name: Run poetry tests
+      if: hashFiles('poetry.lock') != ''
+      shell: bash
+      run: poetry run pytest ${{ inputs.test-flags }}
