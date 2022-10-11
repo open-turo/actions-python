@@ -22,7 +22,13 @@ runs:
         fetch-depth: 0
     - name: Setup tools
       uses: open-turo/action-setup-tools@v1
-    - name: Install dependencies
+    # TODO: Configure .pypi credentials using pypi-token
+    - name: Install poetry dependencies
+      if: hashFiles('poetry.lock') != ''
+      shell: bash
+      run: ${GITHUB_ACTION_PATH}/lib/poetry-install.sh
+    - name: Install pip dependencies
+      if: hashFiles('poetry.lock') == ''
       shell: bash
       run: pip install -e .
     - name: Pre-commit
