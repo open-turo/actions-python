@@ -1,21 +1,14 @@
-<p align="center">
-    <a href="https://github.com/open-turo/actions-python/releases/" alt="Release">
-        <img src="https://img.shields.io/github/release/open-turo/actions-python" /></a>
-    <a href="https://github.com/open-turo/actions-python/releases/" alt="Release date">
-        <img src="https://img.shields.io/github/release-date/open-turo/actions-python" /></a>
-    <a href="https://github.com/open-turo/actions-python/releases/" alt="Release status">
-        <img src="https://github.com/open-turo/actions-python/actions/workflows/release.yaml/badge.svg " /></a>
-    <a href="https://github.com/open-turo/actions-python/blob/main/LICENSE" alt="License">
-        <img src="https://img.shields.io/github/license/open-turo/actions-python.svg" /></a>
-    <a href="https://GitHub.com/open-turo/actions-python/commit/" alt="Last commit">
-        <img src="https://img.shields.io/github/last-commit/open-turo/actions-s3-artifact" /></a>
-    <a href="https://conventionalcommits.org" alt="Conventional commits">
-        <img src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg" /></a>
-</p>
-
 # `open-turo/actions-python`
 
 GitHub Action for `python` based repositories. It uses `pip` as package manager.
+
+[![Release](https://img.shields.io/github/v/release/open-turo/actions-python)](https://github.com/open-turo/actions-python/releases/)
+[![Tests pass/fail](https://img.shields.io/github/workflow/status/open-turo/actions-python/CI)](https://github.com/open-turo/actions-python/actions/)
+[![License](https://img.shields.io/github/license/open-turo/actions-python)](./LICENSE)
+[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](https://github.com/dwyl/esta/issues)
+[![Conventional commits](https://img.shields.io/badge/conventional%20commits-1.0.2-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Join us!](https://img.shields.io/badge/Turo-Join%20us%21-593CFB.svg)](https://turo.com/jobs)
 
 ## Actions
 
