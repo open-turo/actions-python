@@ -25,4 +25,8 @@ poetry config --list
 
 # Install dependencies
 # TODO: We may need to install some extras/groups here by default
-poetry install
+if [[ -n "$SKIP_POETRY_INSTALL" ]]; then
+    echo "Skipping poetry install"
+else
+    poetry install
+fi
