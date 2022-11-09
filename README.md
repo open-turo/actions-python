@@ -6,7 +6,7 @@ GitHub Action for `python` based repositories. It uses `pip` as package manager.
 [![Tests pass/fail](https://img.shields.io/github/workflow/status/open-turo/actions-python/CI)](https://github.com/open-turo/actions-python/actions/)
 [![License](https://img.shields.io/github/license/open-turo/actions-python)](./LICENSE)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](https://github.com/dwyl/esta/issues)
-[![semantic-release][semantic-image]][semantic-url]
+[![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 [![Conventional commits](https://img.shields.io/badge/conventional%20commits-1.0.2-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Join us!](https://img.shields.io/badge/Turo-Join%20us%21-593CFB.svg)](https://turo.com/jobs)
