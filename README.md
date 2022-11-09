@@ -5,6 +5,7 @@ GitHub Action for `python` based repositories. It uses `pip` as package manager.
 [![Release](https://img.shields.io/github/v/release/open-turo/actions-python)](https://github.com/open-turo/actions-python/releases/)
 [![Tests pass/fail](https://img.shields.io/github/workflow/status/open-turo/actions-python/CI)](https://github.com/open-turo/actions-python/actions/)
 [![License](https://img.shields.io/github/license/open-turo/actions-python)](./LICENSE)
+[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](https://github.com/dwyl/esta/issues)
 [![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 [![Conventional commits](https://img.shields.io/badge/conventional%20commits-1.0.2-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
