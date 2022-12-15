@@ -76,6 +76,8 @@ runs:
       run: |
         # Use poetry to bump the version in pyproject.toml
         poetry version "${{ steps.version.outputs.new_release_version }}"
+        git config --global user.email "github-actions@example.com"
+        git config --global user.name "GitHub Actions"
 
         # Commit the bumped project version with a non-semver chore: commit message
         git commit -m "chore: release ${{ steps.version.outputs.new_release_version }}" pyproject.toml
