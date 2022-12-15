@@ -19,6 +19,14 @@ inputs:
   extra-plugins:
     required: false
     description: Extra plugins for pre-install. You can also specify specifying version range for the extra plugins if you prefer.
+  git-user-name:
+    required: false
+    description: User name to associate with release version bump commit.
+    default: Github Actions
+  git-user-email:
+    required: false
+    description: User email to associate with release version bump commit.
+    default: github-actions@example.com
 outputs:
   new-release-published:
     description: Whether a new release was published
@@ -76,11 +84,15 @@ runs:
       run: |
         # Use poetry to bump the version in pyproject.toml
         poetry version "${{ steps.version.outputs.new_release_version }}"
-        git config --global user.email "github-actions@example.com"
-        git config --global user.name "GitHub Actions"
+
+        # Specify the user name and email which is required to commit with a token auth
+        git config user.email "${{ inputs.git-user-name }}"
+        git config user.name "${{ inputs.git-user-email }}"
 
         # Commit the bumped project version with a non-semver chore: commit message
-        git commit -m "chore: release ${{ steps.version.outputs.new_release_version }}" pyproject.toml
+        git add pyproject.toml
+        git --no-pager diff --staged
+        git commit -m "chore: release ${{ steps.version.outputs.new_release_version }}"
 
         # Push the changes to the current (should be main) branch, if this is not a dry-run
         # TODO: This might not be super safe, we should consider that this could
