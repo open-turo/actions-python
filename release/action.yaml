@@ -60,6 +60,8 @@ runs:
       uses: cycjimmy/semantic-release-action@v3
       with:
         dry_run: true
+        branches: |
+          ['${{ github.ref_name	}}']
         extra_plugins: ${{ inputs.extra-plugins }}
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
