@@ -49,8 +49,49 @@ runs:
     - name: Install setuptools
       shell: bash
       run: python -m pip install --upgrade setuptools wheel twine
+    - name: Install poetry
+      uses: open-turo/actions-python/poetry-install@v1
+    - name: Authorize
+      uses: open-turo/action-git-auth@v2
+      with:
+        github-personal-access-token: ${{ inputs.github-token }}
+    - name: Version
+      id: version
+      uses: cycjimmy/semantic-release-action@v3
+      with:
+        dry_run: true
+        extra_plugins: ${{ inputs.extra-plugins }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        PYPI_TOKEN: ${{ inputs.pypi-token }}
+    - name: Update package version (non-poetry)
+      if: hashFiles('poetry.lock') == '' && steps.version.outputs.new_release_published != 'false'
+      shell: bash
+      run: echo "::warning::New version published for non-poetry package, version must be updated manually in setup.py and code."
+    - name: Update package version (non-poetry)
+      if: hashFiles('poetry.lock') != '' && steps.version.outputs.new_release_published != 'false'
+      shell: bash
+      run: |
+        # Use poetry to bump the version in pyproject.toml
+        poetry version "${{ steps.version.outputs.new_release_version }}"
+
+        # Commit the bumped project version with a non-semver chore: commit message
+        git commit -m "chore: release ${{ steps.version.outputs.new_release_version }}" pyproject.toml
+
+        # Push the changes to the current (should be main) branch, if this is not a dry-run
+        # TODO: This might not be super safe, we should consider that this could
+        # be broken with beta/alpha releases, and might need an explicit check
+        # somehow to ensure we're not releasing poorly against a branch that
+        # shouldn't do so
+        if [[ "${{ inputs.dry-run }}" == "false" ]]; then
+          git push || { echo "::error:: Failed to push version update for pyproject.toml, check your github-token permissions, or branch protections."; exit 1; }
+        fi
+
+        # Nice logging, generate success exit code from this run step
+        echo "::info::Version successfully updated in pyproject.toml to ${{ steps.version.outputs.new_release_version }}."
     - name: Release
       id: release
+      if: steps.version.outputs.new_release_published == 'true'
       uses: cycjimmy/semantic-release-action@v3
       with:
         dry_run: ${{ inputs.dry-run }}
