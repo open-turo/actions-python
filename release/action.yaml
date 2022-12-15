@@ -104,7 +104,7 @@ runs:
         fi
 
         # Nice logging, generate success exit code from this run step
-        echo "::info::Version successfully updated in pyproject.toml to ${{ steps.version.outputs.new_release_version }}."
+        echo "::notice::Version successfully updated in pyproject.toml to ${{ steps.version.outputs.new_release_version }}."
     - name: Release
       id: release
       if: steps.version.outputs.new_release_published == 'true'
