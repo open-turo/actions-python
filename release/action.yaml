@@ -45,6 +45,11 @@ runs:
       if: inputs.checkout-repo
       with:
         fetch-depth: 0
+        persist-credentials: false
+    - name: Authorize
+      uses: open-turo/action-git-auth@v2
+      with:
+        github-personal-access-token: ${{ inputs.github-token }}
     - name: Set node.js version
       if: hashFiles('.node-version') == ''
       shell: bash
@@ -59,10 +64,6 @@ runs:
       run: python -m pip install --upgrade setuptools wheel twine
     - name: Install poetry
       uses: open-turo/actions-python/poetry-install@v1
-    - name: Authorize
-      uses: open-turo/action-git-auth@v2
-      with:
-        github-personal-access-token: ${{ inputs.github-token }}
     - name: Version
       id: version
       uses: cycjimmy/semantic-release-action@v3
