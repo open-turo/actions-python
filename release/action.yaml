@@ -93,7 +93,7 @@ runs:
         # Commit the bumped project version with a non-semver chore: commit message
         git add pyproject.toml
         git --no-pager diff --staged
-        git commit -m "chore: release ${{ steps.version.outputs.new_release_version }} [skip actions]"
+        git commit --author="${{ inputs.git-user-name }} <${{ inputs.git-user-email }}>" -m "chore: release ${{ steps.version.outputs.new_release_version }}\n\nskip-checks: true"
 
         # Push the changes to the current (should be main) branch, if this is not a dry-run
         # TODO: This might not be super safe, we should consider that this could
