@@ -1,18 +1,6 @@
-<<<<<<< HEAD
 name: Python Release & Publish
 description: Python that publishes a new release.
 inputs:
-  checkout-repo:
-    required: false
-    description: Perform checkout as first step of action
-    default: "true"
-  github-token:
-    required: true
-    description: GitHub token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.GITHUB_TOKEN'
-    default: ${{ github.token }}
-  pypi-token:
-    required: false
-    description: PyPI token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.PYPI_TOKEN'
   dry-run:
     required: false
     description: Whether to run semantic release in `dry-run` mode. It will override the `dryRun` attribute in your configuration file
@@ -28,6 +16,14 @@ inputs:
     required: false
     description: User email to associate with release version bump commit.
     default: github-actions@example.com
+  github-token:
+    required: true
+    description: GitHub token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.GITHUB_TOKEN'
+    default: ${{ github.token }}
+  python-version:
+    required: false
+    description: Python version to install on the github runner.
+    default: 3.10.4
 outputs:
   new-release-published:
     description: Whether a new release was published
@@ -43,28 +39,15 @@ runs:
   steps:
     - name: Checkout
       uses: actions/checkout@v3
-      if: inputs.checkout-repo
       with:
         fetch-depth: 0
         persist-credentials: false
-    - name: Authorize
-      uses: open-turo/action-git-auth@v2
-      with:
-        github-personal-access-token: ${{ inputs.github-token }}
-    - name: Set node.js version
-      if: hashFiles('.node-version') == ''
-      shell: bash
-      run: echo '16.14.2' > .node-version
-    - name: Setup tools
-      uses: open-turo/action-setup-tools@v1
-    # - name: Install dependencies
-    #   shell: bash
-    #   run: pip install -e .
-    - name: Install setuptools
-      shell: bash
-      run: python -m pip install --upgrade setuptools wheel twine
+    - name: Setup python
+      uses: actions/setup-python@v4
     - name: Install poetry
-      uses: open-turo/actions-python/poetry-install@v1
+      shell: bash
+      run: |
+        ${GITHUB_ACTION_PATH}/../lib/install-poetry
     - name: Version
       id: version
       uses: cycjimmy/semantic-release-action@v3
@@ -94,7 +77,10 @@ runs:
         # Commit the bumped project version with a non-semver chore: commit message
         git add pyproject.toml
         git --no-pager diff --staged
-        git commit --author="${{ inputs.git-user-name }} <${{ inputs.git-user-email }}>" -m "chore: release ${{ steps.version.outputs.new_release_version }}" -m "[skip actions]"
+        git commit --author="${{ inputs.git-user-name }} <${{ inputs.git-user-email }}>" -m "chore: release ${{ steps.version.outputs.new_release_version }}
+
+
+        skip-checks: true"
 
         # Push the changes to the current (should be main) branch, if this is not a dry-run
         # TODO: This might not be super safe, we should consider that this could
@@ -116,29 +102,3 @@ runs:
         extra_plugins: ${{ inputs.extra-plugins }}
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
-        PYPI_TOKEN: ${{ inputs.pypi-token }}
-=======
-name: Python CI
-description: GitHub Action runs CI on a Python based repository
-inputs:
-  github-token:
-    required: true
-    description: GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'
-    default: ${{ github.token }}
-runs:
-  using: composite
-  steps:
-    - uses: armand-sauzay/actions-installs/actionlint@initial-repo-setup
-    - name: Lint
-      uses: armand-sauzay/actions-python/lint@initial-repo-setup
-      with:
-        github-token: ${{ inputs.github-token }}
-    - name: Test
-      uses: armand-sauzay/actions-python/test@initial-repo-setup
-      with:
-        github-token: ${{ inputs.github-token }}
-    - name: Test
-      uses: armand-sauzay/actions-python/release@initial-repo-setup
-      with:
-        github-token: ${{ inputs.github-token }}
->>>>>>> 51882f2 (feat: initial repository setup)

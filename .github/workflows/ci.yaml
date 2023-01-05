@@ -6,6 +6,7 @@ on:
 
 jobs:
   lint:
+<<<<<<< HEAD
     name: Lint
     runs-on: ubuntu-latest
     steps:
@@ -20,3 +21,9 @@ jobs:
       - uses: open-turo/actions-gha/test@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+=======
+    uses: ./.github/workflows/lint.yaml
+
+  test:
+    uses: ./.github/workflows/test.yaml
+>>>>>>> 51882f2 (feat: initial repository setup)

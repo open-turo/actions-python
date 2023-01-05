@@ -11,7 +11,11 @@ jobs:
   build:
     steps:
       - name: Lint
+<<<<<<< HEAD
         uses: open-turo/actions-python/lint@v1
+=======
+        uses: armand-sauzay/actions-python/lint@v1
+>>>>>>> 51882f2 (feat: initial repository setup)
         with:
           ## example value for github-token provided below
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -31,9 +35,13 @@ This action is an `composite` action.
 
 ## Lint Checks
 
+<<<<<<< HEAD
 This action runs the following lint checks:
 
 - [action-pre-commit](https://github.com/open-turo/action-pre-commit)
+=======
+This action runs pre-commit.
+>>>>>>> 51882f2 (feat: initial repository setup)
 
 ## Notes
 

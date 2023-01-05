@@ -17,7 +17,11 @@ repos:
     hooks:
       - id: commitlint
         stages: [commit-msg]
+<<<<<<< HEAD
         additional_dependencies: ["@open-turo/commitlint-config-conventional"]
+=======
+        additional_dependencies: ["@commitlint/config-conventional"]
+>>>>>>> 51882f2 (feat: initial repository setup)
   - repo: https://github.com/rhysd/actionlint
     rev: v1.6.8
     hooks:

@@ -1,0 +1,19 @@
+name: Python CI
+description: GitHub Action runs CI on a Python based repository
+inputs:
+  github-token:
+    required: true
+    description: GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'
+    default: ${{ github.token }}
+runs:
+  using: composite
+  steps:
+    - uses: armand-sauzay/actions-installs/actionlint@initial-repo-setup
+    - name: Lint
+      uses: armand-sauzay/actions-python/lint@initial-repo-setup
+      with:
+        github-token: ${{ inputs.github-token }}
+    - name: Test
+      uses: armand-sauzay/actions-python/test@initial-repo-setup
+      with:
+        github-token: ${{ inputs.github-token }}

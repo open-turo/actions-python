@@ -1,21 +1,28 @@
 name: Python Test
 description: GitHub Action that tests a python based repository
 inputs:
+<<<<<<< HEAD
   checkout-repo:
     required: false
     description: Perform checkout as first step of action
     default: "true"
+=======
+>>>>>>> 51882f2 (feat: initial repository setup)
   github-token:
     required: true
     description: GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'
     default: ${{ github.token }}
+<<<<<<< HEAD
   pypi-token:
     required: false
     description: PyPI token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.PYPI_TOKEN'
+=======
+>>>>>>> 51882f2 (feat: initial repository setup)
   test-flags:
     required: false
     description: Flags and args for test command
     default: ""
+<<<<<<< HEAD
 runs:
   using: composite
   steps:
@@ -25,6 +32,21 @@ runs:
     - name: Setup tools
       uses: open-turo/action-setup-tools@v1
     # First we attempt to run a pip-based workflow if there is no poetry.lock
+=======
+  python-version:
+    required: false
+    description: Python version to install on the github runner.
+    default: 3.10.4
+runs:
+  using: composite
+  steps:
+    - name: Setup python
+      uses: actions/setup-python@v4
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+>>>>>>> 51882f2 (feat: initial repository setup)
     - name: Install pip dependencies
       if: hashFiles('poetry.lock') == ''
       shell: bash
@@ -40,11 +62,20 @@ runs:
       shell: bash
       run: pytest ${{ inputs.test-flags }}
     # If we do have a poetry.lock, we use a poetry based workflow
+<<<<<<< HEAD
+=======
+    - name: Install poetry
+      if: hashFiles('poetry.lock') != ''
+      uses: armand-sauzay/actions-installs/poetry@initial-repo-setup
+>>>>>>> 51882f2 (feat: initial repository setup)
     - name: Install poetry dependencies
       if: hashFiles('poetry.lock') != ''
       shell: bash
       run: |
+<<<<<<< HEAD
         ${GITHUB_ACTION_PATH}/../lib/poetry-install.sh
+=======
+>>>>>>> 51882f2 (feat: initial repository setup)
         poetry install --extras dev || echo "No dev extras"
         poetry install --with dev || echo "No dev dependency group"
         poetry install --extras test || echo "No test extras"

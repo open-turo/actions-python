@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # `open-turo/actions-python/test` GitHub Action for running Python Tests
+=======
+# `armand-sauzay/actions-python/test` GitHub Action for running Python Tests
+>>>>>>> 51882f2 (feat: initial repository setup)
 
 ## Description
 
@@ -11,7 +15,11 @@ jobs:
   test:
     steps:
       - name: Test
+<<<<<<< HEAD
         uses: open-turo/actions-python/test@v1
+=======
+        uses: armand-sauzay/actions-python/test@v1
+>>>>>>> 51882f2 (feat: initial repository setup)
         with:
           ## example value for github-token provided below
           github-token: ${{ secrets.GITHUB_TOKEN }}

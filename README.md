@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # `open-turo/actions-python`
 
 GitHub Action for `python` based repositories. It uses `pip` as package manager.
@@ -5,11 +6,23 @@ GitHub Action for `python` based repositories. It uses `pip` as package manager.
 [![Release](https://img.shields.io/github/v/release/open-turo/actions-python)](https://github.com/open-turo/actions-python/releases/)
 [![Tests pass/fail](https://img.shields.io/github/workflow/status/open-turo/actions-python/CI)](https://github.com/open-turo/actions-python/actions/)
 [![License](https://img.shields.io/github/license/open-turo/actions-python)](./LICENSE)
+=======
+# `armand-sauzay/actions-python`
+
+GitHub Action for `python` based repositories. It uses `pip` as package manager.
+
+[![Release](https://img.shields.io/github/v/release/armand-sauzay/actions-python)](https://github.com/armand-sauzay/actions-python/releases/)
+[![Tests pass/fail](https://img.shields.io/github/workflow/status/armand-sauzay/actions-python/CI)](https://github.com/armand-sauzay/actions-python/actions/)
+[![License](https://img.shields.io/github/license/armand-sauzay/actions-python)](./LICENSE)
+>>>>>>> 51882f2 (feat: initial repository setup)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](https://github.com/dwyl/esta/issues)
 [![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 [![Conventional commits](https://img.shields.io/badge/conventional%20commits-1.0.2-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+<<<<<<< HEAD
 [![Join us!](https://img.shields.io/badge/Turo-Join%20us%21-593CFB.svg)](https://turo.com/jobs)
+=======
+>>>>>>> 51882f2 (feat: initial repository setup)
 
 ## Actions
 
@@ -40,7 +53,10 @@ Documentation is found [here](./release/README.md).
 ## Get Help
 
 Each Action has a detailed README for how to use it as referenced above. Please review Issues, post new Issues against this repository as needed.
+<<<<<<< HEAD
 
 ## Contributions
 
 Please see [here](https://github.com/open-turo/contributions) for guidelines on how to contribute to this project.
+=======
+>>>>>>> 51882f2 (feat: initial repository setup)

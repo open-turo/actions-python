@@ -1,0 +1,14 @@
+name: Lint
+
+on:
+  workflow_call:
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: armand-sauzay/actions-installs/actionlint@initial-repo-setup
+      - uses: armand-sauzay/actions-installs/poetry@initial-repo-setup
+      - uses: actions/checkout@v3
+      - uses: pre-commit/action@v3.0.0

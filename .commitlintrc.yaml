@@ -1,2 +1,6 @@
 extends:
+<<<<<<< HEAD
   - "@open-turo/commitlint-config-conventional"
+=======
+  - "@commitlint/config-conventional"
+>>>>>>> 51882f2 (feat: initial repository setup)

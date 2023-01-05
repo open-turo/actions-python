@@ -1,0 +1,60 @@
+name: Lint
+
+on:
+  workflow_call:
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: armand-sauzay/actions-installs/actionlint@initial-repo-setup
+      - name: Add relevant python context to test action.
+        run: |
+          mkdir xxx
+          touch xxx/__init__.py
+          echo 3.10.5 > .python-version
+          cat > pyproject.toml <<-EOF
+          [tool.poetry]
+          name = "xxx"
+          version = "0.1.0"
+          description = "test"
+          authors = ["XXX <xxx@users.noreply.github.com>"]
+          [tool.poetry.dependencies]
+          python = ">=3.10, <3.11"
+          pandas = "==1.5.2"
+
+          [build-system]
+          requires = ["poetry-core"]
+          build-backend = "poetry.core.masonry.api"
+          EOF
+
+      - name: Run actions-python/lint
+        uses: ./lint
+        with:
+          checkout-repo: false
+      - name: Check tools
+        shell: bash
+        run: |
+          #check that poetry exists and return error if not
+          if ! command -v poetry &> /dev/null
+          then
+              echo "poetry could not be found"
+              exit
+          fi
+
+          #check that python version is 3.10.5 and return error if not
+          if ! python --version | grep -q "3.10.5"
+          then
+              echo "python version is not 3.10.5"
+              exit 1
+          fi
+
+          #check that pandas version is 1.5.2 and return error if not
+          if ! poetry show pandas | grep -q "1.5.2"
+          then
+              echo "pandas version is not 1.5.2"
+              exit 1
+          fi

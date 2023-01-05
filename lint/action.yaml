@@ -5,9 +5,12 @@ inputs:
     required: false
     description: Perform checkout as first step of action
     default: "true"
+<<<<<<< HEAD
   pypi-token:
     required: false
     description: PyPI token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.PYPI_TOKEN'
+=======
+>>>>>>> 51882f2 (feat: initial repository setup)
   github-token:
     required: true
     description: GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'
@@ -17,6 +20,7 @@ runs:
   steps:
     - name: Checkout
       uses: actions/checkout@v3
+<<<<<<< HEAD
       if: inputs.checkout-repo
       with:
         fetch-depth: 0
@@ -33,3 +37,28 @@ runs:
       run: pip install -e .
     - name: Pre-commit
       uses: open-turo/action-pre-commit@v1
+=======
+      if: inputs.checkout-repo == true
+      with:
+        fetch-depth: 0
+    - name: Setup python
+      # this will use by default the .python-version of the repository that uses
+      # this action
+      uses: actions/setup-python@v4
+    - name: Install poetry
+      if: hashFiles('pyproject.toml') != ''
+      uses: armand-sauzay/actions-installs/poetry@initial-repo-setup
+    - name: Install poetry dependencies
+      if: hashFiles('pyproject.toml') != ''
+      shell: bash
+      run: |
+        poetry install
+    - name: Install pip dependencies
+      if: hashFiles('pyproject.toml') == ''
+      shell: bash
+      run: pip install -e .
+    - name: Pre-commit
+      uses: pre-commit/action@v3.0.0
+      with:
+        extra_args: --all-files
+>>>>>>> 51882f2 (feat: initial repository setup)
