@@ -33,7 +33,7 @@ outputs:
     value: ${{ steps.release.outputs.new_release_published }}
   new-release-version:
     description: Version of the new release
-    value: ${{ steps.release.outputs.new_release_version }}
+    value: ${{ steps.release.outputs.new_release_version ||  steps.version.outputs.new_release_version }}
   new-release-major-version:
     description: Major version of the new release
     value: ${{ steps.release.outputs.new_release_major_version }}
