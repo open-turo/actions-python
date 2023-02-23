@@ -20,3 +20,19 @@ jobs:
       - uses: open-turo/actions-gha/test@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-docs:
+    name: Publish docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      - uses: actions/cache@v2
+        with:
+          key: ${{ github.ref }}
+          path: .cache
+      - run: |
+          pip install mkdocs-material
+      - run: mkdocs gh-deploy --config-file docs/mkdocs.yaml --force

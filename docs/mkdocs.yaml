@@ -1,0 +1,32 @@
+site_name: Actions Python
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: deep orange
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: deep orange
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to dark mode
+  features:
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/github-alt
+  logo: favicon.svg
+  favicon: favicon.svg
+repo_name: open-turo/actions-python
+repo_url: https://github.com/open-turo/actions-python
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/open-turo
