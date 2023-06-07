@@ -22,6 +22,8 @@ runs:
     - name: Checkout
       uses: actions/checkout@v3
       if: inputs.checkout-repo
+      with:
+        fetch-depth: 0
     - name: Setup tools
       uses: open-turo/action-setup-tools@v1
     # First we attempt to run a pip-based workflow if there is no poetry.lock
