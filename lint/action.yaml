@@ -20,8 +20,10 @@ runs:
       if: inputs.checkout-repo
       with:
         fetch-depth: 0
-    - name: Setup tools
-      uses: open-turo/action-setup-tools@v1
+    # - name: Setup tools
+    #   uses: open-turo/action-setup-tools@v1
+    - name: Pre-commit
+      uses: open-turo/action-pre-commit@fix/gha-fail
     # TODO: Configure .pypi credentials using pypi-token
     - name: Install poetry dependencies
       if: hashFiles('poetry.lock') != ''
@@ -31,5 +33,3 @@ runs:
       if: hashFiles('poetry.lock') == ''
       shell: bash
       run: pip install -e .
-    - name: Pre-commit
-      uses: open-turo/action-pre-commit@fix/gha-fail
