@@ -32,4 +32,4 @@ runs:
       shell: bash
       run: pip install -e .
     - name: Pre-commit
-      uses: open-turo/action-pre-commit@v1
+      uses: open-turo/action-pre-commit@fix/gha-fail
