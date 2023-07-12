@@ -8,7 +8,7 @@ inputs:
   github-token:
     required: true
     description: GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'
-    default: ${{ github.token }}
+    default: ""
   pypi-token:
     required: false
     description: PyPI token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.PYPI_TOKEN'
@@ -19,6 +19,11 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Authorize
+      uses: open-turo/action-git-auth@v2
+      if: inputs.github-token != ''
+      with:
+        github-personal-access-token: ${{ inputs.github-token }}
     - name: Checkout
       uses: actions/checkout@v3
       if: inputs.checkout-repo
