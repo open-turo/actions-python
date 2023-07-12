@@ -11,10 +11,15 @@ inputs:
   github-token:
     required: true
     description: GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'
-    default: ${{ github.token }}
+    default: ""
 runs:
   using: composite
   steps:
+    - name: Authorize
+      uses: open-turo/action-git-auth@v2
+      if: inputs.github-token != ''
+      with:
+        github-personal-access-token: ${{ inputs.github-token }}
     - name: Checkout
       uses: actions/checkout@v3
       if: inputs.checkout-repo
