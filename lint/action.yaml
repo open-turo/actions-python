@@ -22,7 +22,7 @@ runs:
         github-personal-access-token: ${{ inputs.github-token }}
     - name: Checkout
       uses: actions/checkout@v3
-      if: inputs.checkout-repo
+      if: inputs.checkout-repo == 'true'
       with:
         fetch-depth: 0
     - name: Setup tools
