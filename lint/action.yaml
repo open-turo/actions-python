@@ -37,4 +37,4 @@ runs:
       shell: bash
       run: pip install -e .
     - name: Pre-commit
-      uses: open-turo/action-pre-commit@v1
+      uses: open-turo/action-pre-commit@f/dsci-3589_fix_python-version_mismatch_for_action-pre-commit_-_action-python
