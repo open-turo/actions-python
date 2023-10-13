@@ -36,5 +36,4 @@ runs:
       if: hashFiles('poetry.lock') == ''
       shell: bash
       run: pip install -e .
-    - name: Pre-commit
-      uses: open-turo/action-pre-commit@v1
+    - uses: pre-commit/action@v3.0.0
