@@ -28,10 +28,17 @@ runs:
     - name: Setup tools
       uses: open-turo/action-setup-tools@v1
     # TODO: Configure .pypi credentials using pypi-token
-    - name: Install poetry dependencies
+    - name: Install poetry
       if: hashFiles('poetry.lock') != ''
       shell: bash
       run: ${GITHUB_ACTION_PATH}/../lib/poetry-install.sh
+    - name: Make sure poetry uses the current python version
+      if: hashFiles('poetry.lock') != ''
+      shell: bash
+      run: |
+        # Use the version that pyenv gives as python version pyenv version-name
+        PYTHON_VERSION_SET=$(pyenv version-name)
+        poetry env use $PYTHON_VERSION_SET
     - name: Install pip dependencies
       if: hashFiles('poetry.lock') == ''
       shell: bash
