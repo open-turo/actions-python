@@ -20,3 +20,20 @@ jobs:
       - uses: open-turo/actions-gha/test@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  lint-live:
+    name: Lint / Live
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repos:
+          - prowler-cloud/prowler
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.repos }}
+      - uses: open-turo/actions-python/lint@v1
+        with:
+          checkout-repo: false
+        # with:
+        #   github-token: ${{ secrets.GITHUB_TOKEN }}
