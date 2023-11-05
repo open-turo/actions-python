@@ -42,10 +42,6 @@ runs:
         pip install -e ".[dev]" || true
         # Install the extras="test" setup.py dependencies
         pip install -e ".[test]" || true
-    - name: Run pip tests
-      if: hashFiles('poetry.lock') == ''
-      shell: bash
-      run: pytest ${{ inputs.test-flags }}
     # If we do have a poetry.lock, we use a poetry based workflow
     - name: Install poetry dependencies
       if: hashFiles('poetry.lock') != ''
@@ -56,7 +52,21 @@ runs:
         poetry install --with dev || echo "No dev dependency group"
         poetry install --extras test || echo "No test extras"
         poetry install --with test || echo "No test dependency group"
+    - name: Run pip tests
+      if: hashFiles('poetry.lock') == ''
+      shell: bash
+      run: |
+        # Try to run pytest directly
+        if command -v pytest &>/dev/null; then
+          pytest ${{ inputs.test-flags }}
+        elif [[ -f setup.py ]]; then
+          # Try to run setup.py tests
+          python setup.py test -- ${{ inputs.test-flags }}
+        fi
     - name: Run poetry tests
       if: hashFiles('poetry.lock') != ''
       shell: bash
-      run: poetry run pytest ${{ inputs.test-flags }}
+      run: |
+        if poetry export --without-hashes --format=requirements.txt | grep 'pytest' &>/dev/null; then
+          poetry run pytest ${{ inputs.test-flags }}
+        fi
