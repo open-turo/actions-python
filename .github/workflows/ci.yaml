@@ -21,6 +21,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+  # Lint live tests ensure that the action works against public repositories
+  # using poetry and pre-commit
   lint-live:
     name: Lint / Live
     runs-on: ubuntu-latest
