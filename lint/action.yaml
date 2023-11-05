@@ -37,6 +37,10 @@ runs:
       shell: bash
       run: |
         # Use the version that pyenv gives as python version pyenv version-name
+        if ! command -v pyenv &>/dev/null; then
+          echo "pyenv not found, skipping"
+          exit 0
+        fi
         PYTHON_VERSION_SET=$(pyenv version-name)
         poetry env use $PYTHON_VERSION_SET
     - name: Install pip dependencies
