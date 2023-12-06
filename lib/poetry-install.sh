@@ -28,5 +28,5 @@ poetry config --list
 if [[ -n "$SKIP_POETRY_INSTALL" ]]; then
     echo "Skipping poetry install"
 else
-    poetry install
+    poetry install --no-root --with test
 fi
