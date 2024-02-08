@@ -12,6 +12,9 @@ jobs:
       - uses: open-turo/actions-gha/lint@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check release notes on pull_request
+        if: github.event_name == 'pull_request'
+        uses: open-turo/actions-release/lint-release-notes@v4
 
   test:
     name: Test
@@ -19,4 +22,26 @@ jobs:
     steps:
       - uses: open-turo/actions-gha/test@v2
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  # lint-oss tries to run this action against open source repositories not in
+  # open-turo to make sure this is usable outside the org.
+  # Repositories added to this list should have pre-commit hooks that don't
+  # require external tooling to be installed.
+  # Repositories added to this list must have passing pre-commit hooks.
+  lint-oss:
+    name: Lint / Open source
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repos:
+          - tiangolo/fastapi
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.repos }}
+      # TODO: Remove branch reference
+      - uses: open-turo/actions-python/lint@feat/make-actions-leaner
+        with:
+          checkout-repo: false
           github-token: ${{ secrets.GITHUB_TOKEN }}

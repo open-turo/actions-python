@@ -5,13 +5,11 @@ inputs:
     required: false
     description: Perform checkout as first step of action
     default: "true"
-  pypi-token:
-    required: false
-    description: PyPI token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.PYPI_TOKEN'
   github-token:
     required: true
     description: GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'
     default: ""
+
 runs:
   using: composite
   steps:
@@ -21,31 +19,15 @@ runs:
       with:
         github-personal-access-token: ${{ inputs.github-token }}
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       if: inputs.checkout-repo == 'true'
       with:
         fetch-depth: 0
-    - name: Setup tools
-      uses: open-turo/action-setup-tools@v1
-    # TODO: Configure .pypi credentials using pypi-token
-    - name: Install poetry
-      if: hashFiles('poetry.lock') != ''
+    - name: Setup python
+      uses: actions/setup-python@v5
+    - name: Install pre-commit
+      run: pip install pre-commit
       shell: bash
-      run: ${GITHUB_ACTION_PATH}/../lib/poetry-install.sh
-    - name: Make sure poetry uses the current python version
-      if: hashFiles('poetry.lock') != ''
+    - name: Run pre-commit
+      run: pre-commit run --show-diff-on-failure --color=always --all-files
       shell: bash
-      run: |
-        # Use the version that pyenv gives as python version pyenv version-name
-        if ! command -v pyenv &>/dev/null; then
-          echo "pyenv not found, skipping"
-          exit 0
-        fi
-        PYTHON_VERSION_SET=$(pyenv version-name)
-        poetry env use $PYTHON_VERSION_SET
-    - name: Install pip dependencies
-      if: hashFiles('poetry.lock') == ''
-      shell: bash
-      run: pip install -e .
-    - name: Pre-commit
-      uses: open-turo/action-pre-commit@v2
