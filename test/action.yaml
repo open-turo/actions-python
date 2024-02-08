@@ -9,13 +9,11 @@ inputs:
     required: true
     description: GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'
     default: ""
-  pypi-token:
-    required: false
-    description: PyPI token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.PYPI_TOKEN'
   test-flags:
     required: false
     description: Flags and args for test command
     default: ""
+
 runs:
   using: composite
   steps:
@@ -25,44 +23,39 @@ runs:
       with:
         github-personal-access-token: ${{ inputs.github-token }}
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       if: inputs.checkout-repo == 'true'
       with:
         fetch-depth: 0
-    - name: Setup tools
-      uses: open-turo/action-setup-tools@v1
+    - name: Setup python
+      if: hashFiles('poetry.lock') != ''
+      uses: actions/setup-python@v5
     # First we attempt to run a pip-based workflow if there is no poetry.lock
     - name: Install pip dependencies
       if: hashFiles('poetry.lock') == ''
       shell: bash
       run: |
-        # Install the current package as editable
-        pip install -e .
-        # Install the extras="dev" setup.py dependencies
-        pip install -e ".[dev]" || true
-        # Install the extras="test" setup.py dependencies
-        pip install -e ".[test]" || true
-    # If we do have a poetry.lock, we use a poetry based workflow
-    - name: Install poetry dependencies
-      if: hashFiles('poetry.lock') != ''
-      shell: bash
-      run: |
-        ${GITHUB_ACTION_PATH}/../lib/poetry-install.sh
-        poetry install --extras dev || echo "No dev extras"
-        poetry install --with dev || echo "No dev dependency group"
-        poetry install --extras test || echo "No test extras"
-        poetry install --with test || echo "No test dependency group"
-    - name: Run pip tests
+        pip install -r requirements.txt
+    - name: Run tests
       if: hashFiles('poetry.lock') == ''
       shell: bash
       run: |
-        # Try to run pytest directly
         if command -v pytest &>/dev/null; then
           pytest ${{ inputs.test-flags }}
         elif [[ -f setup.py ]]; then
-          # Try to run setup.py tests
           python setup.py test -- ${{ inputs.test-flags }}
+        else
+          echo "No tests found"
         fi
+    # If we do have a poetry.lock, we use a poetry based workflow
+    - name: install poetry
+      if: hashFiles('poetry.lock') != ''
+      shell: bash
+      run: pip install poetry
+    - name: Install poetry dependencies
+      if: hashFiles('poetry.lock') != ''
+      shell: bash
+      run: poetry install
     - name: Run poetry tests
       if: hashFiles('poetry.lock') != ''
       shell: bash
