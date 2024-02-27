@@ -41,7 +41,7 @@ jobs:
         with:
           repository: ${{ matrix.repos }}
       # TODO: Remove branch reference
-      - uses: open-turo/actions-python/lint@live-tests
+      - uses: open-turo/actions-python/lint@fix/update-action-pre-commit-to-v2
         with:
           checkout-repo: false
         # with:
@@ -67,7 +67,7 @@ jobs:
         with:
           repository: ${{ matrix.repos }}
       # TODO: Remove branch reference
-      - uses: open-turo/actions-python/test@live-tests
+      - uses: open-turo/actions-python/test@fix/update-action-pre-commit-to-v2
         with:
           checkout-repo: false
           github-token: ${{ secrets.GITHUB_TOKEN }}
