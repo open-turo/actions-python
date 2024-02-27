@@ -67,6 +67,8 @@ runs:
       if: hashFiles('poetry.lock') != ''
       shell: bash
       run: |
-        if poetry export --without-hashes --format=requirements.txt | grep 'pytest' &>/dev/null; then
+        if poetry show pytest &>/dev/null; then
           poetry run pytest ${{ inputs.test-flags }}
+        else
+          echo "::warning::pytest not found in poetry.lock"
         fi
