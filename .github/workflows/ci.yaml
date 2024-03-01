@@ -40,8 +40,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: ${{ matrix.repos }}
-      # TODO: Remove branch reference
-      - uses: open-turo/actions-python/lint@feat/make-actions-leaner
+      - uses: actions/checkout@v4
+        with:
+          path: this
+      - uses: ./this/lint
         with:
           checkout-repo: false
           github-token: ${{ secrets.GITHUB_TOKEN }}
