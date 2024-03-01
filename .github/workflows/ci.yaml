@@ -42,8 +42,8 @@ jobs:
           repository: ${{ matrix.repos }}
       - uses: actions/checkout@v4
         with:
-          path: this
-      - uses: ./this/lint
+          path: actions-python
+      - uses: ./actions-python/lint
         with:
           checkout-repo: false
           github-token: ${{ secrets.GITHUB_TOKEN }}
