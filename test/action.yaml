@@ -13,6 +13,18 @@ inputs:
     required: false
     description: Flags and args for test command
     default: ""
+  setup-script:
+    required: false
+    description: Script to run before tests
+    default: ""
+  upload-coverage:
+    required: false
+    description: Upload coverage report to codecov
+    default: "false"
+  coveralls-repo-token:
+    required: false
+    description: Coveralls repo token
+    default: ""
 
 runs:
   using: composite
@@ -36,6 +48,11 @@ runs:
       shell: bash
       run: |
         pip install -r requirements.txt
+    - name: Run setup script
+      if: hashFiles('poetry.lock') == '' && inputs.setup-script != ''
+      shell: bash
+      run: |
+        ${{ inputs.setup-script }}
     - name: Run tests
       if: hashFiles('poetry.lock') == ''
       shell: bash
@@ -56,6 +73,11 @@ runs:
       if: hashFiles('poetry.lock') != ''
       shell: bash
       run: poetry install
+    - name: Run setup script
+      if: hashFiles('poetry.lock') != '' && inputs.setup-script != ''
+      shell: bash
+      run: |
+        ${{ inputs.setup-script }}
     - name: Run poetry tests
       if: hashFiles('poetry.lock') != ''
       shell: bash
@@ -65,3 +87,8 @@ runs:
         else
           echo "::warning::pytest not found in poetry.lock"
         fi
+    - name: Upload coverage
+      if: inputs.upload-coverage != 'false'
+      uses: coverallsapp/github-action@v2
+      env:
+        COVERALLS_REPO_TOKEN: ${{ inputs.coveralls-repo-token }}
