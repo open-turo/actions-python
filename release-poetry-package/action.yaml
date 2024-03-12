@@ -1,0 +1,115 @@
+name: Python Release & Publish
+description: Python that publishes a new release.
+inputs:
+  checkout-repo:
+    required: false
+    description: Perform checkout as first step of action
+    default: "true"
+  github-token:
+    required: true
+    description: GitHub token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.GITHUB_TOKEN'
+    default: ${{ github.token }}
+  pypi-token:
+    required: false
+    description: PyPI token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.PYPI_TOKEN'
+  dry-run:
+    required: false
+    description: Whether to run semantic release in `dry-run` mode. It will override the `dryRun` attribute in your configuration file
+    default: "false"
+  extra-plugins:
+    required: false
+    description: Extra plugins for pre-install. You can also specify specifying version range for the extra plugins if you prefer.  Defaults to install @open-turo/semantic-release-config.
+    default: |
+      @open-turo/semantic-release-config@^1.4.0
+  git-user-name:
+    required: false
+    description: User name to associate with release version bump commit.
+    default: Github Actions
+  git-user-email:
+    required: false
+    description: User email to associate with release version bump commit.
+    default: github-actions@example.com
+outputs:
+  new-release-published:
+    description: Whether a new release was published
+    value: ${{ steps.release.outputs.new_release_published }}
+  new-release-version:
+    description: Version of the new release
+    value: ${{ steps.release.outputs.new_release_version ||  steps.version.outputs.new_release_version }}
+  new-release-major-version:
+    description: Major version of the new release
+    value: ${{ steps.release.outputs.new_release_major_version }}
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      if: inputs.checkout-repo == 'true'
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+    - name: Authorize
+      uses: open-turo/action-git-auth@v2
+      with:
+        github-personal-access-token: ${{ inputs.github-token }}
+    - name: Set node.js version
+      if: hashFiles('.node-version') == ''
+      shell: bash
+      run: echo '16.14.2' > .node-version
+    - name: Setup tools
+      uses: actions/setup-python@v5
+    - name: Install poetry
+      run: pip install poetry
+      shell: bash
+    - name: Version
+      id: version
+      uses: cycjimmy/semantic-release-action@v3
+      with:
+        dry_run: true
+        branches: |
+          ['${{ github.ref_name	}}']
+        extra_plugins: ${{ inputs.extra-plugins }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        PYPI_TOKEN: ${{ inputs.pypi-token }}
+    - name: Update package version (non-poetry)
+      if: hashFiles('poetry.lock') == '' && steps.version.outputs.new_release_published != 'false'
+      shell: bash
+      run: echo "::warning::New version published for non-poetry package, version must be updated manually in setup.py and code."
+    - name: Update package version (non-poetry)
+      if: hashFiles('poetry.lock') != '' && steps.version.outputs.new_release_published != 'false'
+      shell: bash
+      run: |
+        # Use poetry to bump the version in pyproject.toml
+        poetry version "${{ steps.version.outputs.new_release_version }}"
+
+        # Specify the user name and email which is required to commit with a token auth
+        git config user.email "${{ inputs.git-user-name }}"
+        git config user.name "${{ inputs.git-user-email }}"
+
+        # Commit the bumped project version with a non-semver chore: commit message
+        git add pyproject.toml
+        git --no-pager diff --staged
+        git commit --author="${{ inputs.git-user-name }} <${{ inputs.git-user-email }}>" -m "chore: release ${{ steps.version.outputs.new_release_version }}" -m "[skip actions]"
+
+        # Push the changes to the current (should be main) branch, if this is not a dry-run
+        # TODO: This might not be super safe, we should consider that this could
+        # be broken with beta/alpha releases, and might need an explicit check
+        # somehow to ensure we're not releasing poorly against a branch that
+        # shouldn't do so
+        if [[ "${{ inputs.dry-run }}" == "false" ]]; then
+          git push || { echo "::error:: Failed to push version update for pyproject.toml, check your github-token permissions, or branch protections."; exit 1; }
+        fi
+
+        # Nice logging, generate success exit code from this run step
+        echo "::notice::Version successfully updated in pyproject.toml to ${{ steps.version.outputs.new_release_version }}."
+    - name: Release
+      id: release
+      if: steps.version.outputs.new_release_published == 'true'
+      uses: cycjimmy/semantic-release-action@v3
+      with:
+        dry_run: ${{ inputs.dry-run }}
+        extra_plugins: ${{ inputs.extra-plugins }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        PYPI_TOKEN: ${{ inputs.pypi-token }}
