@@ -9,6 +9,10 @@ inputs:
     required: true
     description: GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'
     default: ""
+  release-notes:
+    required: false
+    description: Whether to generate release notes for the pull request
+    default: "true"
 
 runs:
   using: composite

@@ -17,7 +17,7 @@ GitHub Action that publishes a new release.
 ```yaml
 steps:
   - name: Release
-    uses: open-turo/actions-python/release@v2
+    uses: open-turo/actions-python/release-poetry-package@v2
     with:
       ## example value for github-token provided below
       github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -60,7 +60,7 @@ Github Action Workflow:
 ```yaml
 steps:
   - name: Release
-    uses: open-turo/actions-python/release@v2
+    uses: open-turo/actions-python/release-poetry-package@v2
     with:
       # You can specify specifying version range for the extra plugins if you prefer.
       github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -88,7 +88,7 @@ jobs:
   build:
     steps:
       - name: Release
-        uses: open-turo/actions-python/release@v2
+        uses: open-turo/actions-python/release-poetry-package@v2
         with:
           dry-run: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -101,7 +101,7 @@ jobs:
   build:
     steps:
       - name: Release
-        uses: open-turo/actions-python/release@v2
+        uses: open-turo/actions-python/release-poetry-package@v2
         id: semantic # Need an `id` for output variables
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
