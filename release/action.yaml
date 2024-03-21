@@ -36,10 +36,7 @@ runs:
       if: inputs.checkout-repo == 'true'
       with:
         fetch-depth: 0
-    - name: Authorize
-      uses: open-turo/action-git-auth@v2
-      with:
-        github-personal-access-token: ${{ inputs.github-token }}
+        token: ${{ inputs.github-token }}
     - uses: open-turo/actions-release/semantic-release@v4
       id: release
       with:
