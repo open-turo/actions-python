@@ -13,6 +13,10 @@ inputs:
     required: false
     description: Whether to generate release notes for the pull request
     default: "true"
+  install-poetry:
+    required: false
+    description: Whether to install poetry
+    default: "false"
 
 runs:
   using: composite
@@ -27,5 +31,16 @@ runs:
       if: inputs.checkout-repo == 'true'
       with:
         fetch-depth: 0
+    - name: Install Poetry
+      if: inputs.install-poetry == 'true'
+      run: |
+        pipx install poetry
+        pipx ensurepath
+        poetry env use 3.11
+        #generate output for debugging
+        echo "::debug::Poetry version: $(poetry --version)"
+        echo "::debug::pipx version: $(pipx --version)"
+        echo "::debug::pipx path: $(pipx --path)"
+      shell: bash
     - name: Run pre-commit
       uses: open-turo/action-pre-commit@v3
