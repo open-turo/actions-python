@@ -9,6 +9,10 @@ inputs:
     required: true
     description: GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'
     default: ""
+  install-pre-commit:
+    required: false
+    description: Install pre-commit
+    default: "false"
   release-notes:
     required: false
     description: Whether to generate release notes for the pull request
@@ -28,4 +32,6 @@ runs:
       with:
         fetch-depth: 0
     - name: Run pre-commit
-      uses: open-turo/action-pre-commit@v3
+      uses: open-turo/action-pre-commit@feat/conditionally-install-pre-commit
+      with:
+        install-pre-commit: ${{ inputs.install-pre-commit }}
