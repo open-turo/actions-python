@@ -40,7 +40,6 @@ runs:
       with:
         fetch-depth: 0
     - name: Setup python
-      if: hashFiles('poetry.lock') != ''
       uses: actions/setup-python@v5
     # First we attempt to run a pip-based workflow if there is no poetry.lock
     - name: Install pip dependencies
