@@ -58,6 +58,8 @@ runs:
       run: echo '16.14.2' > .node-version
     - name: Setup tools
       uses: actions/setup-python@v5
+      with:
+        cache: "poetry"
     - name: Install poetry
       run: pip install poetry
       shell: bash
