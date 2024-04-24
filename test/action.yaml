@@ -25,7 +25,12 @@ inputs:
     required: false
     description: Coveralls repo token
     default: ""
-
+  s3-bucket-name:
+    required: false
+    description: S3 bucket name to cache node_modules to speed up dependency installation.
+  s3-bucket-region:
+    required: false
+    description: S3 bucket region to cache node_modules to speed up dependency installation.
 runs:
   using: composite
   steps:
@@ -41,8 +46,6 @@ runs:
         fetch-depth: 0
     - name: Setup python
       uses: actions/setup-python@v5
-      with:
-        cache: "poetry"
     # First we attempt to run a pip-based workflow if there is no poetry.lock
     - name: Install pip dependencies
       if: hashFiles('poetry.lock') == ''
@@ -70,10 +73,13 @@ runs:
       if: hashFiles('poetry.lock') != ''
       shell: bash
       run: pip install poetry
-    - name: Install poetry dependencies
-      if: hashFiles('poetry.lock') != ''
-      shell: bash
-      run: poetry install
+    - name: install poetry dependencies
+      if: success()
+      uses: actions-python/install-poetry-dependencies@v1
+      with:
+        github-token: ${{ inputs.github-token }}
+        s3-bucket-name: ${{ inputs.s3-bucket-name }}
+        s3-bucket-region: ${{ inputs.s3-bucket-region }}
     - name: Run setup script
       if: hashFiles('poetry.lock') != '' && inputs.setup-script != ''
       shell: bash

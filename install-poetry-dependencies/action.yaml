@@ -1,0 +1,84 @@
+name: Install Dependencies
+description: GitHub Action that installs dependencies in a Python based repository
+inputs:
+  github-token:
+    required: true
+    description: GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'
+    default: ${{ github.token }}
+  s3-bucket-name:
+    required: false
+    description: S3 bucket name to cache node_modules to speed up dependency installation.
+  s3-bucket-region:
+    required: false
+    description: S3 bucket region to cache node_modules to speed up dependency installation.
+outputs:
+  cache-hit:
+    description: Whether the cache was hit when installing dependencies
+    value: ${{ steps.read_cache.outputs.cache-hit }}
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      if: inputs.checkout-repo == 'true'
+      with:
+        fetch-depth: 1
+    - name: Setup tools
+      uses: open-turo/action-setup-tools@v2
+    - name: Check for poetry.lock
+      id: check_poetry_lock
+      uses: andstor/file-existence-action@v3
+      with:
+        files: poetry.lock
+    - name: Check Cache
+      id: check_cache
+      shell: bash
+      run: |
+        if [[ "${{ inputs.s3-bucket-name }}" != '' && "${{ steps.check_poetry_lock.outputs.files_exists }}" == 'true' ]]; then
+          RESULT="true"
+        else
+          RESULT="false"
+        fi
+        echo "::set-output name=result::$RESULT"
+    - name: Extract contents hash from poetry.lock
+      id: lockfile_hash
+      if: step.check_cache.outputs.result == 'true'
+      shell: bash
+      run: |
+        HASH=$(cat poetry.lock | grep "content-hash" | head -1 | awk '{print $3}' | tr -d '"')
+        echo "Poetry Content Hash: $HASH"
+        echo "::set-output name=contents_hash::$HASH"
+    - name: setup poetry venv cache
+      shell: bash
+      run: |
+        poetry config virtualenvs.in-project true
+    - name: Load cached poetry venv if available
+      if: step.check_cache.outputs.result == 'true'
+      uses: tespkg/actions-cache@v1
+      id: read_cache
+      with:
+        bucket: ${{ inputs.s3-bucket-name }}
+        use-fallback: false
+        path: venv
+        key: ${{ env.cache-name }}-${{ steps.lockfile_hash.outputs.contents_hash }}
+        restore-keys: ${{ env.cache-name }}-
+      env:
+        AWS_REGION: ${{ inputs.s3-bucket-region }}
+        cache-name: ${{ github.event.repository.name }}/cache-poetry-venv
+    - name: Install poetry dependencies
+      if: sucess()
+      shell: bash
+      run: poetry install
+    - name: Cache poetry venv
+      if: inputs.s3-bucket-name != '' &&  steps.read_cache.outputs.cache-hit != 'true'
+      uses: tespkg/actions-cache@v1
+      id: write_cache
+      with:
+        bucket: ${{ inputs.s3-bucket-name }}
+        use-fallback: false
+        path: venv
+        key: ${{ env.cache-name }}-${{ steps.lockfile_hash.outputs.hash }}
+        restore-keys: ${{ env.cache-name }}-
+      env:
+        AWS_REGION: ${{ inputs.s3-bucket-region }}
+        cache-name: ${{ github.event.repository.name }}/cache-poetry-venv
