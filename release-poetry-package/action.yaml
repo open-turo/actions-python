@@ -29,12 +29,6 @@ inputs:
     required: false
     description: User email to associate with release version bump commit.
     default: github-actions@example.com
-  s3-bucket-name:
-    required: false
-    description: S3 bucket name to cache node_modules to speed up dependency installation.
-  s3-bucket-region:
-    required: false
-    description: S3 bucket region to cache node_modules to speed up dependency installation.
 outputs:
   new-release-published:
     description: Whether a new release was published
@@ -64,8 +58,6 @@ runs:
       run: echo '16.14.2' > .node-version
     - name: Setup tools
       uses: actions/setup-python@v5
-      with:
-        cache: "poetry"
     - name: Install poetry
       run: pip install poetry
       shell: bash
