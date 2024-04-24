@@ -27,10 +27,11 @@ inputs:
     default: ""
   s3-bucket-name:
     required: false
-    description: S3 bucket name to cache node_modules to speed up dependency installation.
+    description: S3 bucket name to cache poetry venv
   s3-bucket-region:
     required: false
-    description: S3 bucket region to cache node_modules to speed up dependency installation.
+    description: S3 bucket region to cache poetry venv
+
 runs:
   using: composite
   steps:
