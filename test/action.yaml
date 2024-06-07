@@ -45,8 +45,15 @@ runs:
     - name: Install pip dependencies
       if: hashFiles('poetry.lock') == ''
       shell: bash
+      #if there is a requirements-dev.txt or requirements-test.txt, we install that
       run: |
-        pip install -r requirements.txt
+        if [[ -f requirements-dev.txt ]]; then
+          pip install -r requirements-dev.txt
+        elif [[ -f requirements-test.txt ]]; then
+          pip install -r requirements-test.txt
+        else
+          pip install -r requirements.txt
+        fi
     - name: Run setup script
       if: hashFiles('poetry.lock') == '' && inputs.setup-script != ''
       shell: bash
@@ -61,7 +68,7 @@ runs:
         elif [[ -f setup.py ]]; then
           python setup.py test -- ${{ inputs.test-flags }}
         else
-            pip install pytest
+            pip install pytest pytest-cov
             pytest ${{ inputs.test-flags }}
         fi
     # If we do have a poetry.lock, we use a poetry based workflow
