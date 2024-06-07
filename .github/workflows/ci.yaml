@@ -1,49 +1,28 @@
-name: CI
+name: Lint
 
 on:
-  pull_request:
-    branches: [main]
+  workflow_call:
+    inputs:
+      runner:
+        required: false
+        default: "['ubuntu-latest']"
+        type: string
+
+    secrets:
+      github-token:
+        required: true
 
 jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
+  pre-commit:
+    runs-on: ${{ fromJson(inputs.runner) }}
     steps:
-      - uses: open-turo/actions-gha/lint@v2
+      - uses: open-turo/actions-python/pre-commit@feat/run-actions-in-parallel
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check release notes on pull_request
-        if: github.event_name == 'pull_request'
-        uses: open-turo/actions-release/lint-release-notes@v4
+          github-token: ${{ secrets.github-token }}
 
-  test:
-    name: Test
-    runs-on: ubuntu-latest
+  commitlint:
+    runs-on: ${{ fromJson(inputs.runner) }}
     steps:
-      - uses: open-turo/actions-gha/test@v2
+      - uses: open-turo/actions-python/pre-commit@feat/run-actions-in-parallel
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-  # lint-oss tries to run this action against open source repositories not in
-  # open-turo to make sure this is usable outside the org.
-  # Repositories added to this list should have pre-commit hooks that don't
-  # require external tooling to be installed.
-  # Repositories added to this list must have passing pre-commit hooks.
-  lint-oss:
-    name: Lint / Open source
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        repos:
-          - tiangolo/fastapi
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          repository: ${{ matrix.repos }}
-      - uses: actions/checkout@v4
-        with:
-          path: actions-python
-      - uses: ./actions-python/lint
-        with:
-          checkout-repo: false
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.github-token }}

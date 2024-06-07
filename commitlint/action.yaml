@@ -1,0 +1,27 @@
+name: "Commitlint Action"
+description: "Lint commit messages using commitlint"
+inputs:
+  node-version:
+    description: "Node version"
+    required: false
+    default: "16"
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+    - name: Install commitlint
+      run: npm install --save-dev @commitlint/cli @commitlint/config-conventional @open-turo/commitlint-config-conventional
+      shell: bash
+    - name: Run commitlint for pull requests
+      if: ${{ github.event_name == 'pull_request' }}
+      run: |
+        npx commitlint --from origin/${{ github.base_ref }} --to HEAD --verbose
+      shell: bash
+    - name: Run commitlint for push to main
+      if: ${{ github.event_name == 'push' }}
+      run: |
+        npx commitlint --from ${{ github.event.before }} --to ${{ github.event.after }} --verbose
+      shell: bash
