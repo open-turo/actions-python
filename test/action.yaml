@@ -25,6 +25,12 @@ inputs:
     required: false
     description: Coveralls repo token
     default: ""
+  s3-bucket-name:
+    required: false
+    description: S3 bucket name to cache poetry venv
+  s3-bucket-region:
+    required: false
+    description: S3 bucket region to cache poetry venv
 
 runs:
   using: composite
@@ -76,10 +82,13 @@ runs:
       if: hashFiles('poetry.lock') != ''
       shell: bash
       run: pip install poetry
-    - name: Install poetry dependencies
-      if: hashFiles('poetry.lock') != ''
-      shell: bash
-      run: poetry install
+    - name: install poetry dependencies
+      if: success()
+      uses: actions-python/install-poetry-dependencies@v1
+      with:
+        github-token: ${{ inputs.github-token }}
+        s3-bucket-name: ${{ inputs.s3-bucket-name }}
+        s3-bucket-region: ${{ inputs.s3-bucket-region }}
     - name: Run setup script
       if: hashFiles('poetry.lock') != '' && inputs.setup-script != ''
       shell: bash
