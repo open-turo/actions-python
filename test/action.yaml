@@ -92,7 +92,9 @@ runs:
         if poetry show pytest &>/dev/null; then
           poetry run pytest ${{ inputs.test-flags }}
         else
-          echo "::warning::pytest not found in poetry.lock"
+          echo "::warning::pytest not found in poetry.lock, installing it and trying to run tests"
+          poetry add --group test pytest
+          poetry run pytest
         fi
     - name: Upload coverage
       if: inputs.upload-coverage != 'false'
