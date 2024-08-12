@@ -68,8 +68,8 @@ runs:
         elif [[ -f setup.py ]]; then
           python setup.py test -- ${{ inputs.test-flags }}
         else
-            pip install pytest pytest-cov
-            pytest ${{ inputs.test-flags }}
+          echo "::error::pytest not found in the dependencies, cannot run tests"
+          exit 1
         fi
     # If we do have a poetry.lock, we use a poetry based workflow
     - name: install poetry
@@ -92,7 +92,8 @@ runs:
         if poetry show pytest &>/dev/null; then
           poetry run pytest ${{ inputs.test-flags }}
         else
-          echo "::warning::pytest not found in poetry.lock"
+          echo "::error::pytest not found in poetry.lock, cannot run tests"
+          exit 1
         fi
     - name: Upload coverage
       if: inputs.upload-coverage != 'false'
