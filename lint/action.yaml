@@ -13,6 +13,12 @@ inputs:
     required: false
     description: Whether to generate release notes for the pull request
     default: "true"
+  s3-bucket-name:
+    required: false
+    description: S3 bucket name to cache node_modules to speed up dependency installation.
+  s3-bucket-region:
+    required: false
+    description: S3 bucket region to cache node_modules to speed up dependency installation.
 
 runs:
   using: composite
@@ -29,3 +35,6 @@ runs:
         fetch-depth: 0
     - name: Run pre-commit
       uses: open-turo/action-pre-commit@v3
+      with:
+        s3-bucket-name: ${{ inputs.s3-bucket-name }}
+        s3-bucket-region: ${{ inputs.s3-bucket-region }}

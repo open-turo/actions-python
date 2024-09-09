@@ -19,11 +19,13 @@ jobs:
 
 ## Inputs
 
-| parameter     | description                                                                                                       | required | default             |
-| ------------- | ----------------------------------------------------------------------------------------------------------------- | -------- | ------------------- |
-| checkout-repo | Perform checkout as first step of action                                                                          | `false`  | true                |
-| pypi-token    | PyPI token that can checkout the repository as well as create tags/releases against it. e.g. 'secrets.PYPI_TOKEN' | `false`  |                     |
-| github-token  | GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'                                        | `true`   | ${{ github.token }} |
+| name               | description                                                                        | required | default |
+| ------------------ | ---------------------------------------------------------------------------------- | -------- | ------- |
+| `checkout-repo`    | <p>Perform checkout as first step of action</p>                                    | `false`  | `true`  |
+| `github-token`     | <p>GitHub token that can checkout the repository. e.g. 'secrets.GITHUB_TOKEN'</p>  | `true`   | `""`    |
+| `release-notes`    | <p>Whether to generate release notes for the pull request</p>                      | `false`  | `true`  |
+| `s3-bucket-name`   | <p>S3 bucket name to cache node_modules to speed up dependency installation.</p>   | `false`  | `""`    |
+| `s3-bucket-region` | <p>S3 bucket region to cache node_modules to speed up dependency installation.</p> | `false`  | `""`    |
 
 ## Runs
 
