@@ -12,7 +12,6 @@ jobs:
       - uses: open-turo/actions-gha/lint@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -20,7 +19,6 @@ jobs:
       - uses: open-turo/actions-gha/test@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
   release:
     needs:
       - lint
@@ -31,3 +29,5 @@ jobs:
       - uses: open-turo/actions-gha/release@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          extra-plugins: |
+            @open-turo/semantic-release-config
