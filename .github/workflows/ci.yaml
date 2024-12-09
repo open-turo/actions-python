@@ -1,8 +1,7 @@
 name: CI
 
 on:
-  pull_request:
-    branches: [main]
+  pull_request: {}
 
 jobs:
   lint:
@@ -12,10 +11,8 @@ jobs:
       - uses: open-turo/actions-gha/lint@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check release notes on pull_request
-        if: github.event_name == 'pull_request'
-        uses: open-turo/actions-release/lint-release-notes@v4
-
+          semantic-release-extra-plugins: |
+            @open-turo/semantic-release-config
   test:
     name: Test
     runs-on: ubuntu-latest
