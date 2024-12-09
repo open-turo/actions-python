@@ -21,13 +21,13 @@ inputs:
 outputs:
   new-release-published:
     description: Whether a new release was published
-    value: ${{ steps.release.outputs.new_release_published }}
+    value: ${{ steps.release.outputs.new-release-published }}
   new-release-version:
     description: Version of the new release
-    value: ${{ steps.release.outputs.new_release_version ||  steps.version.outputs.new_release_version }}
+    value: ${{ steps.release.outputs.new-release-version ||  steps.version.outputs.new-release-version }}
   new-release-major-version:
     description: Major version of the new release
-    value: ${{ steps.release.outputs.new_release_major_version }}
+    value: ${{ steps.release.outputs.new-release-major-version }}
 runs:
   using: composite
   steps:
