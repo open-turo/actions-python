@@ -24,7 +24,7 @@ runs:
   using: composite
   steps:
     - name: Authorize
-      uses: open-turo/action-git-auth@v2
+      uses: open-turo/action-git-auth@v3
       if: inputs.github-token != ''
       with:
         github-personal-access-token: ${{ inputs.github-token }}
