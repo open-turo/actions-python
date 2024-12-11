@@ -37,7 +37,7 @@ runs:
       with:
         fetch-depth: 0
         token: ${{ inputs.github-token }}
-    - uses: open-turo/actions-release/semantic-release@v4
+    - uses: open-turo/actions-release/semantic-release@v5
       id: release
       with:
         github-token: ${{ inputs.github-token }}
