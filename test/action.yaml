@@ -51,10 +51,10 @@ runs:
           echo "manager=poetry" >> $GITHUB_OUTPUT
         elif [[ -f "uv.lock" ]]; then
           echo "manager=uv" >> $GITHUB_OUTPUT
-        elif [[ -f "requirements.txt" ]]; then
+        elif [[ -f "requirements.txt" ]] || [[ -f "pyproject.toml" ]]; then
           echo "manager=pip" >> $GITHUB_OUTPUT
         else
-          echo "::error::No package manager configuration found (poetry.lock/uv.lock/requirements.txt)"
+          echo "::error::No package manager configuration found (poetry.lock/uv.lock/requirements.txt/pyproject.toml)"
           exit 1
         fi
 
@@ -75,17 +75,21 @@ runs:
           "poetry") poetry install ;;
           "uv") uv pip sync ;;
           "pip")
-            # First install dev/test requirements if they exist
-            if [[ -f requirements-dev.txt ]]; then
-              pip install -r requirements-dev.txt
-            elif [[ -f requirements-test.txt ]]; then
-              pip install -r requirements-test.txt
+            # For projects with only pyproject.toml, skip requirements.txt check
+            if [[ -f "pyproject.toml" ]]; then
+              pip install -e ".[test,dev]"
             else
-              pip install -r requirements.txt
-            fi
-            # Install the package itself in editable mode if pyproject.toml or setup.py exists
-            if [[ -f pyproject.toml ]] || [[ -f setup.py ]]; then
-              pip install -e .
+              # Traditional requirements.txt based installation
+              if [[ -f requirements-dev.txt ]]; then
+                pip install -r requirements-dev.txt
+              elif [[ -f requirements-test.txt ]]; then
+                pip install -r requirements-test.txt
+              elif [[ -f requirements.txt ]]; then
+                pip install -r requirements.txt
+              else
+                echo "::error::No requirements file found"
+                exit 1
+              fi
             fi
             ;;
         esac
