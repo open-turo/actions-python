@@ -44,3 +44,22 @@ jobs:
         with:
           checkout-repo: false
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  test-oss:
+    name: Test / Open source
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repos:
+          - pallets/flask
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.repos }}
+      - uses: actions/checkout@v4
+        with:
+          path: actions-python
+      - uses: ./actions-python/test
+        with:
+          checkout-repo: false
+          github-token: ${{ secrets.GITHUB_TOKEN }}
