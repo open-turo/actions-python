@@ -9,6 +9,11 @@ else
     pip install poetry
 fi
 
+# Starting from v2.0.0, the export command is not supported by poetry
+# by default. Need to install a plugin for it. The plugin was part of
+# poetry installation before, so installing it for older versions has no effect
+poetry self add poetry-plugin-export
+
 # Configure the Poetry cache dir to exist in the per-Job RUNNER_TEMP directory
 RUNNER_TEMP=${RUNNER_TEMP:-/tmp}
 # Configure poetry to ignore the global config but not overwrite the local
