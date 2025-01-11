@@ -30,10 +30,10 @@ runs:
   using: composite
   steps:
     - name: Authorize
-      uses: open-turo/action-git-auth@v2
+      uses: open-turo/action-git-auth@v4
       if: inputs.github-token != ''
       with:
-        github-personal-access-token: ${{ inputs.github-token }}
+        github-token: ${{ inputs.github-token }}
     - name: Checkout
       uses: actions/checkout@v4
       if: inputs.checkout-repo == 'true'
