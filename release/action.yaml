@@ -17,7 +17,7 @@ inputs:
     required: false
     description: Extra plugins for pre-install. You can also specify specifying version range for the extra plugins if you prefer.  Defaults to install @open-turo/semantic-release-config.
     default: |
-      @open-turo/semantic-release-config@^1.4.0
+      @open-turo/semantic-release-config
 outputs:
   new-release-published:
     description: Whether a new release was published
