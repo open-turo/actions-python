@@ -29,6 +29,14 @@ inputs:
     required: false
     description: User email to associate with release version bump commit.
     default: github-actions@example.com
+  working-directory:
+    required: false
+    description: The working directory where the release will be run. Defaults to the root of the repository.
+    default: "."
+  tag-format:
+    required: false
+    description: The format of the tag to be created. Defaults to `v${version}`. You can use `component-v${version}` to create a tag with a component in a monorepo.
+    default: "v${version}"
 outputs:
   new-release-published:
     description: Whether a new release was published
@@ -71,15 +79,17 @@ runs:
         branches: |
           ['${{ github.ref_name	}}']
         extra_plugins: ${{ inputs.extra-plugins }}
+        working_directory: ${{ inputs.working-directory }}
+        tag_format: ${{ inputs.tag-format }}
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
         PYPI_TOKEN: ${{ inputs.pypi-token }}
     - name: Update package version (non-poetry)
-      if: hashFiles('poetry.lock') == '' && steps.version.outputs.new_release_published != 'false'
+      if: hashFiles('${{ inputs.working-directory }}/poetry.lock') == '' && steps.version.outputs.new_release_published != 'false'
       shell: bash
       run: echo "::warning::New version published for non-poetry package, version must be updated manually in setup.py and code."
-    - name: Update package version (non-poetry)
-      if: hashFiles('poetry.lock') != '' && steps.version.outputs.new_release_published != 'false'
+    - name: Update package version (poetry)
+      if: hashFiles('${{ inputs.working-directory }}/poetry.lock') != '' && steps.version.outputs.new_release_published != 'false'
       shell: bash
       run: |
         # Use poetry to bump the version in pyproject.toml
@@ -120,6 +130,8 @@ runs:
       with:
         dry_run: ${{ inputs.dry-run }}
         extra_plugins: ${{ inputs.extra-plugins }}
+        working_directory: ${{ inputs.working-directory }}
+        tag_format: ${{ inputs.tag-format }}
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
         PYPI_TOKEN: ${{ inputs.pypi-token }}
