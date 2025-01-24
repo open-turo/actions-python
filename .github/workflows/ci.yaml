@@ -32,7 +32,7 @@ jobs:
     strategy:
       matrix:
         repos:
-          - tiangolo/fastapi
+          - pallets/flask
     steps:
       - uses: actions/checkout@v4
         with:
