@@ -34,7 +34,7 @@ runs:
       with:
         fetch-depth: 0
     - name: Run pre-commit
-      uses: open-turo/action-pre-commit@v3
+      uses: open-turo/action-pre-commit@chore-update-python-version
       with:
         s3-bucket-name: ${{ inputs.s3-bucket-name }}
         s3-bucket-region: ${{ inputs.s3-bucket-region }}
