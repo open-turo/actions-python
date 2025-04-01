@@ -41,60 +41,87 @@ runs:
         fetch-depth: 0
     - name: Setup python
       uses: actions/setup-python@v5
-    # First we attempt to run a pip-based workflow if there is no poetry.lock
-    - name: Install pip dependencies
-      if: hashFiles('poetry.lock') == ''
+
+    # Determine which package manager to use
+    - name: Determine package manager
+      id: pkg-manager
       shell: bash
-      #if there is a requirements-dev.txt or requirements-test.txt, we install that
       run: |
-        if [[ -f requirements-dev.txt ]]; then
-          pip install -r requirements-dev.txt
-        elif [[ -f requirements-test.txt ]]; then
-          pip install -r requirements-test.txt
+        if [[ -f "poetry.lock" ]]; then
+          echo "manager=poetry" >> $GITHUB_OUTPUT
+        elif [[ -f "uv.lock" ]]; then
+          echo "manager=uv" >> $GITHUB_OUTPUT
+        elif [[ -f "requirements.txt" ]] || [[ -f "pyproject.toml" ]]; then
+          echo "manager=pip" >> $GITHUB_OUTPUT
         else
-          pip install -r requirements.txt
+          echo "::error::No package manager configuration found (poetry.lock/uv.lock/requirements.txt/pyproject.toml)"
+          exit 1
         fi
-    - name: Run setup script
-      if: hashFiles('poetry.lock') == '' && inputs.setup-script != ''
+
+    # Install package manager
+    - name: Install package manager
       shell: bash
       run: |
-        ${{ inputs.setup-script }}
+        case "${{ steps.pkg-manager.outputs.manager }}" in
+          "poetry") pip install poetry ;;
+          "uv") pip install uv ;;
+        esac
+
+    # Install dependencies
+    - name: Install dependencies
+      shell: bash
+      run: |
+        case "${{ steps.pkg-manager.outputs.manager }}" in
+          "poetry") poetry install ;;
+          "uv") uv pip sync ;;
+          "pip")
+            # For projects with only pyproject.toml, skip requirements.txt check
+            if [[ -f "pyproject.toml" ]]; then
+              pip install -e ".[test,dev]"
+            else
+              # Traditional requirements.txt based installation
+              if [[ -f requirements-dev.txt ]]; then
+                pip install -r requirements-dev.txt
+              elif [[ -f requirements-test.txt ]]; then
+                pip install -r requirements-test.txt
+              elif [[ -f requirements.txt ]]; then
+                pip install -r requirements.txt
+              else
+                echo "::error::No requirements file found"
+                exit 1
+              fi
+            fi
+            ;;
+        esac
+
+    # Run setup script if provided
+    - name: Run setup script
+      if: inputs.setup-script != ''
+      shell: bash
+      run: ${{ inputs.setup-script }}
+
+    # Run tests
     - name: Run tests
-      if: hashFiles('poetry.lock') == ''
       shell: bash
       run: |
-        if command -v pytest &>/dev/null; then
-          pytest ${{ inputs.test-flags }}
-        elif [[ -f setup.py ]]; then
-          python setup.py test -- ${{ inputs.test-flags }}
-        else
-          echo "::error::pytest not found in the dependencies, cannot run tests"
-          exit 1
-        fi
-    # If we do have a poetry.lock, we use a poetry based workflow
-    - name: install poetry
-      if: hashFiles('poetry.lock') != ''
-      shell: bash
-      run: pip install poetry
-    - name: Install poetry dependencies
-      if: hashFiles('poetry.lock') != ''
-      shell: bash
-      run: poetry install
-    - name: Run setup script
-      if: hashFiles('poetry.lock') != '' && inputs.setup-script != ''
-      shell: bash
-      run: |
-        ${{ inputs.setup-script }}
-    - name: Run poetry tests
-      if: hashFiles('poetry.lock') != ''
-      shell: bash
-      run: |
-        if poetry show pytest &>/dev/null; then
-          poetry run pytest ${{ inputs.test-flags }}
-        else
-          echo "::error::pytest not found in poetry.lock, cannot run tests"
-          exit 1
-        fi
+        case "${{ steps.pkg-manager.outputs.manager }}" in
+          "poetry")
+            if poetry show pytest &>/dev/null; then
+              poetry run pytest ${{ inputs.test-flags }}
+            else
+              echo "::error::pytest not found in poetry.lock, cannot run tests"
+              exit 1
+            fi
+            ;;
+          "uv"|"pip")
+            # Install pytest if not already present
+            if ! command -v pytest &>/dev/null; then
+              echo "::warning::pytest not found, installing pytest and pytest-cov"
+              pip install pytest pytest-cov
+            fi
+            pytest ${{ inputs.test-flags }}
+            ;;
+        esac
     - name: Upload coverage
       if: inputs.upload-coverage != 'false'
       uses: coverallsapp/github-action@v2
