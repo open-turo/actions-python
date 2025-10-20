@@ -79,18 +79,22 @@ runs:
     - name: Update package version (non-poetry)
       if: hashFiles('poetry.lock') != '' && steps.version.outputs.new_release_published != 'false'
       shell: bash
+      env:
+        NEW_RELEASE_VERSION: ${{ steps.version.outputs.new_release_version }}
+        GIT_USER_NAME: ${{ inputs.git-user-name }}
+        GIT_USER_EMAIL: ${{ inputs.git-user-email }}
       run: |
         # Use poetry to bump the version in pyproject.toml
-        poetry version "${{ steps.version.outputs.new_release_version }}"
+        poetry version "$NEW_RELEASE_VERSION"
 
         # Specify the user name and email which is required to commit with a token auth
-        git config user.email "${{ inputs.git-user-name }}"
-        git config user.name "${{ inputs.git-user-email }}"
+        git config user.email "$GIT_USER_NAME"
+        git config user.name "$GIT_USER_EMAIL"
 
         # Commit the bumped project version with a non-semver chore: commit message
         git add pyproject.toml
         git --no-pager diff --staged
-        git commit --author="${{ inputs.git-user-name }} <${{ inputs.git-user-email }}>" -m "chore: release ${{ steps.version.outputs.new_release_version }}" -m "[skip actions]"
+        git commit --author="$GIT_USER_NAME <$GIT_USER_EMAIL>" -m "chore: release $NEW_RELEASE_VERSION" -m "[skip actions]"
 
         # Push the changes to the current (should be main) branch, if this is not a dry-run
         # TODO: This might not be super safe, we should consider that this could
