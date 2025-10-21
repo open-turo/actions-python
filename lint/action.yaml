@@ -36,5 +36,6 @@ runs:
     - name: Run pre-commit
       uses: open-turo/action-pre-commit@v3
       with:
+        github-token: ${{ inputs.github-token }}
         s3-bucket-name: ${{ inputs.s3-bucket-name }}
         s3-bucket-region: ${{ inputs.s3-bucket-region }}
