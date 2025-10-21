@@ -83,6 +83,7 @@ runs:
         NEW_RELEASE_VERSION: ${{ steps.version.outputs.new_release_version }}
         GIT_USER_NAME: ${{ inputs.git-user-name }}
         GIT_USER_EMAIL: ${{ inputs.git-user-email }}
+        DRY_RUN: ${{ inputs.dry-run }}
       run: |
         # Use poetry to bump the version in pyproject.toml
         poetry version "$NEW_RELEASE_VERSION"
@@ -101,12 +102,12 @@ runs:
         # be broken with beta/alpha releases, and might need an explicit check
         # somehow to ensure we're not releasing poorly against a branch that
         # shouldn't do so
-        if [[ "${{ inputs.dry-run }}" == "false" ]]; then
+        if [[ "$DRY_RUN" == "false" ]]; then
           git push || { echo "::error:: Failed to push version update for pyproject.toml, check your github-token permissions, or branch protections."; exit 1; }
         fi
 
         # Nice logging, generate success exit code from this run step
-        echo "::notice::Version successfully updated in pyproject.toml to ${{ steps.version.outputs.new_release_version }}."
+        echo "::notice::Version successfully updated in pyproject.toml to $NEW_RELEASE_VERSION."
     - name: Release
       id: release
       if: steps.version.outputs.new_release_published == 'true'
