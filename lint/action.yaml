@@ -29,7 +29,7 @@ runs:
       with:
         github-token: ${{ inputs.github-token }}
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       if: inputs.checkout-repo == 'true'
       with:
         fetch-depth: 0
