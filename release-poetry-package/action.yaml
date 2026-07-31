@@ -63,7 +63,7 @@ runs:
       shell: bash
     - name: Version
       id: version
-      uses: cycjimmy/semantic-release-action@v5.0.2
+      uses: cycjimmy/semantic-release-action@v6.0.0
       with:
         dry_run: true
         branches: |
@@ -111,7 +111,7 @@ runs:
     - name: Release
       id: release
       if: steps.version.outputs.new_release_published == 'true'
-      uses: cycjimmy/semantic-release-action@v5.0.2
+      uses: cycjimmy/semantic-release-action@v6.0.0
       with:
         dry_run: ${{ inputs.dry-run }}
         extra_plugins: ${{ inputs.extra-plugins }}
